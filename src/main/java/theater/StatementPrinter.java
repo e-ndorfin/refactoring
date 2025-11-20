@@ -1,6 +1,7 @@
 package theater;
 
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -50,8 +51,9 @@ public class StatementPrinter {
     public String statement() {
         final StringBuilder result = new StringBuilder("Statement for " 
             + invoice.getCustomer() + System.lineSeparator());
+        final List<Performance> performances = getPerformances();
 
-        for (Performance p : invoice.getPerformances()) {
+        for (Performance p : performances) {
             // print line for this order
             result.append(String.format("  %s: %s (%s seats)%n", 
                 plays.get(p.getPlayID()).getName(), usd(getAmount(p)), p.getAudience()));
@@ -71,7 +73,7 @@ public class StatementPrinter {
 
     private int getTotalAmount() {
         int total = 0;
-        for (Performance p : invoice.getPerformances()) {
+        for (Performance p : getPerformances()) {
             total += getAmount(p);
         }
         return total;
@@ -79,7 +81,7 @@ public class StatementPrinter {
 
     private int getTotalVolumeCredits() {
         int total = 0;
-        for (Performance p : invoice.getPerformances()) {
+        for (Performance p : getPerformances()) {
             total += getVolumeCredits(p);
         }
         return total;
@@ -88,5 +90,9 @@ public class StatementPrinter {
     private String usd(int amount) {
         final NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
         return formatter.format(amount / (double) Constants.PERCENT_FACTOR);
+    }
+
+    private List<Performance> getPerformances() {
+        return invoice.getPerformances();
     }
 }
