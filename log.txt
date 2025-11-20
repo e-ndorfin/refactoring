@@ -1,3 +1,5 @@
+21f42df Task 2.2 finished :D
+2b21cc6 Task 2.1: updated log.txt
 14121be finished Task 2.1!
 5af5e98 Task 1.2
 18d80a6 finished Task 1.1
