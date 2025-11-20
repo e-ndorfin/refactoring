@@ -1,5 +1,9 @@
 package theater;
 
+/**
+ * This class represents a play with a name and type.
+ * @null The type should not be null
+ */
 public class Play {
 
     private String name;

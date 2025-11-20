@@ -1,12 +1,10 @@
 package theater;
 
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
  * This class generates a statement for a given invoice of performances.
+ * @null The plays map should not be null
  */
 public class StatementPrinter {
     private final Invoice invoice;
@@ -17,8 +15,12 @@ public class StatementPrinter {
         this.plays = plays;
     }
 
+    private Play getPlay(Performance performance) {
+        return plays.get(performance.getPlayID());
+    }
+
     private int getAmount(Performance performance) {
-        Play play = plays.get(performance.getPlayID());
+        Play play = getPlay(performance);
         int result = 0;
         switch (play.getType()) {
             case "tragedy":
@@ -56,7 +58,7 @@ public class StatementPrinter {
         for (Performance p : performances) {
             // print line for this order
             result.append(String.format("  %s: %s (%s seats)%n", 
-                plays.get(p.getPlayID()).getName(), usd(getAmount(p)), p.getAudience()));
+                getPlay(p).getName(), usd(getAmount(p)), p.getAudience()));
         }
         result.append(String.format("Amount owed is %s%n", usd(getTotalAmount())));
         result.append(String.format("You earned %s credits%n", getTotalVolumeCredits()));
@@ -65,7 +67,7 @@ public class StatementPrinter {
 
     private int getVolumeCredits(Performance performance) {
         int credits = Math.max(performance.getAudience() - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
-        if ("comedy".equals(plays.get(performance.getPlayID()).getType())) {
+        if ("comedy".equals(getPlay(performance).getType())) {
             credits += performance.getAudience() / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
         }
         return credits;
