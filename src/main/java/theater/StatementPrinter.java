@@ -20,7 +20,7 @@ public class StatementPrinter {
     }
 
     private int getAmount(Performance performance) {
-        Play play = getPlay(performance);
+        final Play play = getPlay(performance);
         int result = 0;
         switch (play.getType()) {
             case "tragedy":
