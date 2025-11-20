@@ -48,24 +48,16 @@ public class StatementPrinter {
      * @throws RuntimeException if one of the play types is not known
      */
     public String statement() {
-        int totalAmount = 0;
-        int volumeCredits = 0;
         final StringBuilder result = new StringBuilder("Statement for " 
             + invoice.getCustomer() + System.lineSeparator());
 
-        final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
-
         for (Performance p : invoice.getPerformances()) {
-            // add volume credits
-            volumeCredits += getVolumeCredits(p);
-
             // print line for this order
             result.append(String.format("  %s: %s (%s seats)%n", 
-                plays.get(p.getPlayID()).getName(), frmt.format(getAmount(p) / Constants.PERCENT_FACTOR), p.getAudience()));
-            totalAmount += getAmount(p);
+                plays.get(p.getPlayID()).getName(), usd(getAmount(p)), p.getAudience()));
         }
-        result.append(String.format("Amount owed is %s%n", frmt.format(totalAmount / Constants.PERCENT_FACTOR)));
-        result.append(String.format("You earned %s credits%n", volumeCredits));
+        result.append(String.format("Amount owed is %s%n", usd(getTotalAmount())));
+        result.append(String.format("You earned %s credits%n", getTotalVolumeCredits()));
         return result.toString();
     }
 
@@ -75,5 +67,26 @@ public class StatementPrinter {
             credits += performance.getAudience() / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
         }
         return credits;
+    }
+
+    private int getTotalAmount() {
+        int total = 0;
+        for (Performance p : invoice.getPerformances()) {
+            total += getAmount(p);
+        }
+        return total;
+    }
+
+    private int getTotalVolumeCredits() {
+        int total = 0;
+        for (Performance p : invoice.getPerformances()) {
+            total += getVolumeCredits(p);
+        }
+        return total;
+    }
+
+    private String usd(int amount) {
+        final NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
+        return formatter.format(amount / (double) Constants.PERCENT_FACTOR);
     }
 }
